@@ -1,0 +1,23 @@
+{
+  "stage": 5,
+  "totalPacks": 16,
+  "totalQuestions": 405,
+  "categories": {
+    "grammar": 4,
+    "vocabulary": 3,
+    "reading": 4,
+    "listening": 2,
+    "mixed": 2,
+    "placement": 1
+  },
+  "grammarQuestionCount": 100,
+  "readingSource": "100 English articles document supplied by user",
+  "vocabularySource": "600 English-Uzbek vocabulary entries from supplied document",
+  "questionTypes": {
+    "choice": 368,
+    "fill": 24,
+    "trueFalse": 13
+  },
+  "listeningNote": "Web Speech API speech synthesis; no MP3 audio files",
+  "placementNote": "Approximate diagnostic only; not an official CEFR assessment"
+}

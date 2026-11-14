@@ -1,0 +1,28 @@
+{
+  "stage": 9,
+  "name": "Smart Learning System",
+  "algorithm": "transparent-rule-based-adaptive-recommendations",
+  "uses": [
+    "englishuz_test_results_v1",
+    "englishuz_grammar_progress_v1",
+    "englishuz_vocabulary_progress_v1",
+    "englishuz_article_progress_v1",
+    "englishuz_activity_v1",
+    "Firebase learner profile"
+  ],
+  "features": [
+    "weighted recent skill analysis",
+    "daily study plan",
+    "grammar next lesson",
+    "spaced vocabulary review",
+    "unread article recommendation",
+    "targeted test recommendation"
+  ],
+  "storageKey": "englishuz_smart_learning_v1",
+  "limitations": [
+    "not a generative AI tutor",
+    "not an official CEFR assessment",
+    "task completion is manually confirmed",
+    "cloud sync needs Firebase configuration"
+  ]
+}

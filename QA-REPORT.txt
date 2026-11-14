@@ -1,0 +1,18 @@
+EnglishUz QA: 17/17 tekshiruv muvaffaqiyatli.
+01. PASS — 9 ta asosiy bo‘lim metama’lumoti
+02. PASS — 41 ta Grammar darsi
+03. PASS — 600 ta lug‘at yozuvi va 527 ta noyob inglizcha birlik
+04. PASS — 100 ta to‘liq maqola, 10 ta PART, har maqolada 6 ta lug‘at
+05. PASS — 16 ta test to‘plami va 405 savol
+06. PASS — Test breakdown barcha savollarni ko‘nikma va daraja bo‘yicha qamrab oladi
+07. PASS — Global qidiruv Grammar, Article, Vocabulary va Tests ichidan natija beradi
+08. PASS — Smart Learning rejalari kunlik maqsad daqiqalariga mos
+09. PASS — Dashboard haqiqiy kontent sonlarini ishlatadi, ism yoki soxta statistika qotirilmagan
+10. PASS — Firebase config to‘g‘ri placeholder holatida va Firestore Rules mavjud
+11. PASS — GitHub Pages workflow to‘g‘ri ruxsat va deployment actionlarini belgilaydi
+12. PASS — Asosiy HTML ichki IDlari takrorlanmagan
+13. PASS — Barcha ishlatilgan SVG ikonkalarning yo‘li mavjud
+14. PASS — Standalone HTML Firebase modulisiz va to‘g‘ri demo adapter bilan
+15. PASS — Ishlatilgan lokal resurslar repository ichida mavjud
+16. PASS — Eski foydalanilmaydigan scaffold fayllar olib tashlangan
+17. PASS — Runtime script va Firebase Auth module sintaksisi tekshiriladi

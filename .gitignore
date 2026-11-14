@@ -1,0 +1,19 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Firebase local cache
+.firebase/
+.firebaserc.local
+
+# Node dependencies and logs
+node_modules/
+npm-debug.log*
+
+# Never commit service-account credentials or private keys
+*service-account*.json
+*private-key*
+*.pem
+*.p12

@@ -1,0 +1,48 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedInAs(userId) {
+      return request.auth != null && request.auth.uid == userId;
+    }
+
+    function validProfile() {
+      return request.resource.data.keys().hasOnly([
+        'uid', 'displayName', 'email', 'photoURL', 'englishLevel',
+        'learningGoal', 'dailyGoalMinutes', 'providerId', 'createdAt', 'updatedAt'
+      ])
+      && request.resource.data.uid is string
+      && request.resource.data.displayName is string
+      && request.resource.data.displayName.size() >= 2
+      && request.resource.data.displayName.size() <= 60
+      && request.resource.data.email is string
+      && request.resource.data.email.size() <= 254
+      && request.resource.data.photoURL is string
+      && request.resource.data.photoURL.size() <= 2048
+      && request.resource.data.englishLevel in ['Not sure', 'A1', 'A2', 'B1', 'B2', 'C1', 'C2']
+      && request.resource.data.learningGoal in ['General English', 'CEFR', 'IELTS', 'School / University', 'Travel', 'Work']
+      && request.resource.data.dailyGoalMinutes in [15, 30, 45, 60, 90, 120]
+      && request.resource.data.providerId == 'google.com'
+      && request.resource.data.createdAt is timestamp
+      && request.resource.data.updatedAt is timestamp;
+    }
+
+    match /users/{userId} {
+      allow read: if signedInAs(userId);
+      allow create: if signedInAs(userId) && request.resource.data.uid == userId && validProfile();
+      allow update: if signedInAs(userId) && request.resource.data.uid == userId && validProfile();
+      allow delete: if false;
+
+      match /private/{documentId} {
+        allow read: if signedInAs(userId) && documentId == 'learningState';
+        allow create, update: if signedInAs(userId)
+          && documentId == 'learningState'
+          && request.resource.data.keys().hasOnly(['stateJson', 'clientUpdatedAt', 'updatedAt'])
+          && request.resource.data.stateJson is string
+          && request.resource.data.stateJson.size() < 740000
+          && request.resource.data.clientUpdatedAt is int
+          && request.resource.data.updatedAt is timestamp;
+        allow delete: if signedInAs(userId) && documentId == 'learningState';
+      }
+    }
+  }
+}
