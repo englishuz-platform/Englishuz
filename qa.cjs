@@ -162,8 +162,9 @@ check('Dashboard haqiqiy kontent sonlarini ishlatadi, ism yoki soxta statistika 
 });
 check('Firebase config to‘g‘ri placeholder holatida va Firestore Rules mavjud', () => {
   const config = fs.readFileSync(path.join(root,'firebase-config.js'),'utf8');
-  assert.ok(config.includes('apiKey: ""'));
-  assert.ok(config.includes('projectId: ""'));
+  for (const key of ['apiKey', 'authDomain', 'projectId', 'appId']) {
+    assert.match(config, new RegExp(`${key}:\\s*"[^\\"]+"`), `Firebase config missing ${key}`);
+  }
   const rules = fs.readFileSync(path.join(root,'firestore.rules'),'utf8');
   assert.ok(rules.includes('request.auth.uid == userId'));
   assert.ok(rules.includes("documentId == 'learningState'"));
