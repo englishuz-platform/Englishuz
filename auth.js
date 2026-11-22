@@ -51,6 +51,11 @@ const state = () => ({
 function emit() {
   window.dispatchEvent(new CustomEvent('englishuz:auth-state', { detail: state() }));
 }
+function withTimeout(promise, ms, message) {
+  let timer;
+  return Promise.race([promise, new Promise((_, reject) => { timer = setTimeout(() => reject(new Error(message)), ms); })])
+    .finally(() => clearTimeout(timer));
+}
 function setStatus(status, message = '') {
   authStatus = status;
   lastError = message;
@@ -333,11 +338,11 @@ async function boot() {
     return;
   }
   try {
-    const [appSdk, authenticationSdk, firestoreSdk] = await Promise.all([
+    const [appSdk, authenticationSdk, firestoreSdk] = await withTimeout(Promise.all([
       import(`${FIREBASE_BASE}/firebase-app.js`),
       import(`${FIREBASE_BASE}/firebase-auth.js`),
       import(`${FIREBASE_BASE}/firebase-firestore.js`)
-    ]);
+    ]), 15000, 'Firebase SDK 15 soniyada yuklanmadi. Internet yoki CDN ulanishini tekshiring.');
     authSdk = authenticationSdk;
     dbSdk = firestoreSdk;
     app = appSdk.getApps().length ? appSdk.getApp() : appSdk.initializeApp(CONFIG);
@@ -345,13 +350,21 @@ async function boot() {
     db = dbSdk.getFirestore(app);
     await authSdk.setPersistence(auth, authSdk.browserLocalPersistence);
     authSdk.getRedirectResult(auth).catch((error) => {
-      lastError = friendlyError(error); authStatus = 'error'; emit();
+      lastError = friendlyError(error);
+      emit();
     });
+    // Firebase should emit the first session immediately. This watchdog ensures
+    // the profile page never remains on its loading spinner if it does not.
+    const authObserverTimer = setTimeout(() => {
+      if (authStatus === 'loading') {
+        setStatus('error', 'Google hisob holati 12 soniyada aniqlanmadi. Internet, Firebase Auth va brauzer cookie sozlamalarini tekshiring.');
+      }
+    }, 12000);
     authSdk.onAuthStateChanged(auth, async (user) => {
+      clearTimeout(authObserverTimer);
       const previousUid = currentUser?.uid || null;
       const nextUid = user?.uid || null;
       if (previousUid !== nextUid && nextUid) {
-        // Flush the outgoing account's active-time segment before its local cache is swapped. Sign-out flushes before clearing in signOut().
         window.dispatchEvent(new CustomEvent('englishuz:before-learning-state-change'));
         if (syncTimer) { clearTimeout(syncTimer); syncTimer = null; }
       }
@@ -364,22 +377,34 @@ async function boot() {
         window.dispatchEvent(new CustomEvent('englishuz:learning-state-ready', { detail: { uid: null } }));
         return;
       }
-      authStatus = 'loading'; emit();
+      // Show Google identity immediately; Firestore loads in the background.
+      currentProfile = defaultProfile(user);
+      authStatus = 'signedIn';
+      lastError = '';
+      lastSyncStatus = 'syncing';
+      emit();
       try {
-        await loadOrCreateProfile(user);
-        authStatus = 'signedIn'; lastError = '';
-        emit();
-        await reconcileLearningState(user.uid);
-        window.dispatchEvent(new CustomEvent('englishuz:learning-state-ready', { detail: { uid: user.uid } }));
-        emit();
+        await withTimeout(loadOrCreateProfile(user), 10000,
+          'Profil ma’lumotlari 10 soniyada kelmadi. Firestore sozlamalari va internetni tekshiring.');
+        try {
+          await withTimeout(reconcileLearningState(user.uid), 12000,
+            'O‘quv ma’lumotlarini sinxronlash 12 soniyada yakunlanmadi. Profil ochiq, keyinroq qayta urinib ko‘ring.');
+        } catch (syncError) {
+          lastSyncStatus = 'error';
+          lastError = friendlyError(syncError);
+        }
       } catch (error) {
         authStatus = 'signedIn';
-        lastError = friendlyError(error);
+        currentProfile = currentProfile || defaultProfile(user);
         lastSyncStatus = 'error';
-        window.dispatchEvent(new CustomEvent('englishuz:learning-state-ready', { detail: { uid: user.uid } }));
-        emit();
+        lastError = friendlyError(error);
       }
-    }, (error) => setStatus('error', friendlyError(error)));
+      window.dispatchEvent(new CustomEvent('englishuz:learning-state-ready', { detail: { uid: user.uid } }));
+      emit();
+    }, (error) => {
+      clearTimeout(authObserverTimer);
+      setStatus('error', friendlyError(error));
+    });
   } catch (error) {
     setStatus('error', `Firebase SDK yuklanmadi: ${friendlyError(error)}. Internet aloqasi va Firebase CDN manzilini tekshiring.`);
   }
