@@ -66,7 +66,7 @@ Google login ishlab ketishi uchun o‘zingizning Firebase loyihangiz ma’lumotl
 3. Authentication → Sign-in method (yoki Providers) ichida Google provider'ni yoqing.
 4. Authentication settings → Authorized domains bo‘limiga `USERNAME.github.io` domeningizni qo‘shing. Custom domain ishlatsangiz, uni ham qo‘shing.
 5. Cloud Firestore database yarating.
-6. `assets/js/firebase-config.example.js` faylidan nusxa olib `assets/js/firebase-config.js` yarating va Firebase Web App config qiymatlarini kiriting.
+6. `firebase-config.example.js` faylidan nusxa olib `firebase-config.js` yarating va Firebase Web App config qiymatlarini kiriting.
 7. Firestore qoidalarini deploy qiling:
 
 ```bash
@@ -86,7 +86,7 @@ Rasmiy Firebase yo‘riqnomalari:
 
 ## 4. Firebase konfiguratsiyasi haqida
 
-`assets/js/firebase-config.js` hozir bo‘sh template. Bu ataylab qoldirilgan: har bir Firebase loyihasi uchun `apiKey`, `authDomain`, `projectId` va `appId` boshqacha. O‘zingizning qiymatlaringizni kiritmasdan haqiqiy OAuth loginni yakuniy sinovdan o‘tkazib bo‘lmaydi. `firebase-config.js` GitHub Pages uchun kerak bo‘lsa repository'da bo‘lishi mumkin, chunki u service-account secret emas; lekin secret kalitlar kiritilmasligi shart.
+`firebase-config.js` hozir bo‘sh template. Bu ataylab qoldirilgan: har bir Firebase loyihasi uchun `apiKey`, `authDomain`, `projectId` va `appId` boshqacha. O‘zingizning qiymatlaringizni kiritmasdan haqiqiy OAuth loginni yakuniy sinovdan o‘tkazib bo‘lmaydi. `firebase-config.js` GitHub Pages uchun kerak bo‘lsa repository'da bo‘lishi mumkin, chunki u service-account secret emas; lekin secret kalitlar kiritilmasligi shart.
 
 ## 5. Test / QA
 
@@ -130,9 +130,20 @@ EnglishUz/
         └── firebase-config.example.js
 ```
 
-`index.html` asosiy to‘liq platforma; `assets/js/auth.js` Google Authentication va Firestore sinxronlashni boshqaradi. `EnglishUz-Standalone.html` esa cloud login'siz lokal ko‘rish uchun mo‘ljallangan.
+`index.html` asosiy to‘liq platforma; `auth.js` Google Authentication va Firestore sinxronlashni boshqaradi. `EnglishUz-Standalone.html` esa cloud login'siz lokal ko‘rish uchun mo‘ljallangan.
 
 ## Release notes
 
 - Stage 10: haqiqiy dashboard ko‘rsatkichlari, umumiy qidiruv, klaviatura accessibility, kamchilikdagi SVG ikonlar to‘ldirildi, GitHub Pages workflow, SECURITY policy, deployment qo‘llanmasi va QA skripti qo‘shildi.
 - Eski, runtime'da ishlatilmaydigan JS scaffold fayllari olib tashlandi.
+
+
+## Telefonga o‘rnatish (PWA)
+
+EnglishUz HTTPS orqali ochilganda o‘rnatiladigan web-ilova sifatida ishlaydi.
+
+- **Android (Chrome):** saytni oching, brauzer menyusidan “Install app” yoki “Add to Home screen”ni tanlang. Brauzer qo‘llasa, sahifadagi “EnglishUz ilovasini o‘rnatish” tugmasi ham chiqadi.
+- **iPhone (Safari):** Share tugmasi → “Add to Home Screen”.
+- Internet bo‘lmaganda ilovaning asosiy sahifasi ochilishi mumkin; Google login va bulut sinxronlash uchun internet kerak.
+
+GitHub Actions `.github/workflows/deploy.yml` fayli `main` branch'ga push bo‘lganda testlarni ishga tushiradi va muvaffaqiyatli bo‘lsa GitHub Pages'ga avtomatik deploy qiladi.
