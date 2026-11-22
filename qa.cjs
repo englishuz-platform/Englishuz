@@ -38,11 +38,12 @@ const documentMock = {
     return elements.get(selector);
   },
   querySelectorAll(){ return []; },
+  getElementById(id) { return this.querySelector(`#${id}`); },
   addEventListener(){},
   createElement(tag){ return makeElement(tag); }
 };
 const windowMock = {
-  location: { hash: '#dashboard' }, history: { replaceState(){} }, innerWidth: 1440,
+  location: { hash: '#dashboard', protocol: 'https:' }, history: { replaceState(){} }, innerWidth: 1440, navigator: {},
   EnglishUzAuth: { getState: () => ({ status: 'unconfigured', user: null, profile: null, syncStatus: 'idle' }) },
   matchMedia: () => ({ matches: false }),
   addEventListener(type, fn) { if (!events.has(type)) events.set(type, []); events.get(type).push(fn); },
