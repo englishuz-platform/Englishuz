@@ -1,0 +1,37 @@
+{
+  "id": "./",
+  "name": "EnglishUz — Ingliz tili platformasi",
+  "short_name": "EnglishUz",
+  "description": "Grammar, Vocabulary, Reading, testlar va shaxsiy o‘quv reja.",
+  "lang": "uz",
+  "start_url": "./#dashboard",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": [
+    "standalone",
+    "minimal-ui"
+  ],
+  "orientation": "portrait-primary",
+  "background_color": "#f5f7fb",
+  "theme_color": "#315cf5",
+  "icons": [
+    {
+      "src": "./assets/englishuz-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Grammar",
+      "short_name": "Grammar",
+      "url": "./#grammar"
+    },
+    {
+      "name": "Testlar",
+      "short_name": "Tests",
+      "url": "./#tests"
+    }
+  ]
+}
