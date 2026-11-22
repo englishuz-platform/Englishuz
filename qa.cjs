@@ -5,9 +5,9 @@ const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
 
-const root = path.resolve(__dirname, '..');
+const root = __dirname;
 const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
-const articlesJson = JSON.parse(fs.readFileSync(path.join(root, 'data', 'articles.json'), 'utf8'));
+const articlesJson = JSON.parse(fs.readFileSync(path.join(root, 'articles.json'), 'utf8'));
 const report = [];
 function check(name, fn) { fn(); report.push(name); }
 
@@ -161,7 +161,7 @@ check('Dashboard haqiqiy kontent sonlarini ishlatadi, ism yoki soxta statistika 
   assert.ok(!output.includes('Platforma tayyor bo‘lgach'));
 });
 check('Firebase config to‘g‘ri placeholder holatida va Firestore Rules mavjud', () => {
-  const config = fs.readFileSync(path.join(root,'assets/js/firebase-config.js'),'utf8');
+  const config = fs.readFileSync(path.join(root,'firebase-config.js'),'utf8');
   assert.ok(config.includes('apiKey: ""'));
   assert.ok(config.includes('projectId: ""'));
   const rules = fs.readFileSync(path.join(root,'firestore.rules'),'utf8');
@@ -196,7 +196,7 @@ check('Standalone HTML Firebase modulisiz va to‘g‘ri demo adapter bilan', ()
   assert.ok(inline.length >= 2);
   const { spawnSync } = require('node:child_process');
   for (let i=0;i<inline.length;i++) {
-    const temp = path.join(root,'tests',`.standalone-${i}.js`);
+    const temp = path.join(root,`.standalone-${i}.js`);
     fs.writeFileSync(temp,inline[i][1]);
     const result = spawnSync(process.execPath,['--check',temp],{encoding:'utf8'});
     fs.unlinkSync(temp);
@@ -204,12 +204,12 @@ check('Standalone HTML Firebase modulisiz va to‘g‘ri demo adapter bilan', ()
   }
 });
 check('Ishlatilgan lokal resurslar repository ichida mavjud', () => {
-  for (const resource of ['assets/favicon.svg','assets/js/firebase-config.js','assets/js/auth.js','firestore.rules','.github/workflows/deploy.yml','README.md','SECURITY.md','EnglishUz-Standalone.html']) {
+  for (const resource of ['favicon.svg','firebase-config.js','auth.js','firestore.rules','.github/workflows/deploy.yml','README.md','SECURITY.md','EnglishUz-Standalone.html','manifest.webmanifest','service-worker.js']) {
     assert.ok(fs.existsSync(path.join(root,resource)), `missing resource: ${resource}`);
   }
-  assert.ok(html.includes('assets/favicon.svg'));
-  assert.ok(html.includes('assets/js/firebase-config.js'));
-  assert.ok(html.includes('assets/js/auth.js'));
+  assert.ok(html.includes('favicon.svg'));
+  assert.ok(html.includes('src="firebase-config.js"'));
+  assert.ok(html.includes('src="auth.js"'));
 });
 check('Eski foydalanilmaydigan scaffold fayllar olib tashlangan', () => {
   for (const obsolete of ['assets/js/app.js','assets/js/grammar-data.js','assets/js/vocabulary-data.js','assets/js/icons.js','assets/css/styles.css']) {
@@ -218,14 +218,14 @@ check('Eski foydalanilmaydigan scaffold fayllar olib tashlangan', () => {
 });
 
 check('Runtime script va Firebase Auth module sintaksisi tekshiriladi', () => {
-  const jsPath = path.join(root,'tests','.inline-check.js');
+  const jsPath = path.join(root,'.inline-check.js');
   let mainScript = scriptMatches[0][1].replace(/\ninit\(\);\s*$/, '\n');
   fs.writeFileSync(jsPath, mainScript);
   const { spawnSync } = require('node:child_process');
   const main = spawnSync(process.execPath, ['--check', jsPath], { encoding:'utf8' });
   fs.unlinkSync(jsPath);
   assert.equal(main.status, 0, main.stderr || main.stdout);
-  const auth = spawnSync(process.execPath, ['--check', path.join(root,'assets/js/auth.js')], { encoding:'utf8' });
+  const auth = spawnSync(process.execPath, ['--check', path.join(root,'auth.js')], { encoding:'utf8' });
   assert.equal(auth.status, 0, auth.stderr || auth.stdout);
 });
 
