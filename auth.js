@@ -251,17 +251,13 @@ async function signInWithGoogle() {
   if (!auth) throw new Error(lastError || 'Firebase Authentication hali ishga tushmadi. Konfiguratsiya va internetni tekshiring.');
   const provider = new authSdk.GoogleAuthProvider();
   provider.setCustomParameters({ prompt: 'select_account' });
-  const mobile = window.matchMedia?.('(pointer: coarse)').matches || window.innerWidth <= 720;
   try {
-    if (mobile) {
-      await authSdk.signInWithRedirect(auth, provider);
-      return;
-    }
+    // Use popup on mobile and desktop. Redirect flow can lose its initial
+    // sessionStorage state in mobile browsers with storage partitioning.
     await authSdk.signInWithPopup(auth, provider);
   } catch (error) {
     if (error?.code === 'auth/popup-blocked') {
-      await authSdk.signInWithRedirect(auth, provider);
-      return;
+      throw new Error('Google login oynasi bloklandi. Chrome sozlamalarida ushbu sayt uchun pop-up oynalarga ruxsat bering va qayta urinib ko‘ring.');
     }
     throw new Error(friendlyError(error));
   }
