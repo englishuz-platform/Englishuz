@@ -1,4 +1,4 @@
-const CACHE_NAME = 'englishuz-pwa-v2.0.2';
+const CACHE_NAME = 'englishuz-pwa-v2.0.3';
 const APP_SHELL = [
   './', './index.html', './manifest.webmanifest', './favicon.svg',
   './assets/englishuz-icon.svg', './auth.js', './firebase-config.js',
